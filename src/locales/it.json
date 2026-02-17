@@ -1,0 +1,12 @@
+{
+  "expenses_by_category": "Spese per categoria",
+  "food": "Cibo",
+  "travel": "Viaggi",
+  "bills": "Bollette",
+  "shopping": "Acquisti",
+  "monthly_budget": "Budget mensile e spese effettive",
+  "actual": "Effettivo",
+  "budget": "Budget",
+  "search": "Cerca",
+  "logout": "Disconnettersi"
+}
