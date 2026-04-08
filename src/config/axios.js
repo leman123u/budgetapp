@@ -1,16 +1,11 @@
 import axios from "axios";
 
-const baseURL =
-  (typeof process !== "undefined" &&
-    process.env.REACT_APP_API_URL &&
-    process.env.REACT_APP_API_URL.trim()) ||
-  "https://backendrender-3-ehrl.onrender.com/api";
-
 const axiosInstance = axios.create({
-  baseURL,
+  baseURL: "https://backendrender-3-ehrl.onrender.com/api",
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: false // 🔥 FIX
 });
 
 // request interceptor
@@ -19,10 +14,19 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// response interceptor — keep full AxiosError so callers can read response/status
+// response interceptor
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  (error) => {
+    if (error.response) {
+      return Promise.reject(
+        error.response.data?.message ||
+        error.response.data?.error ||
+        "Server error"
+      );
+    }
+    return Promise.reject("Network error");
+  }
 );
 
 // endpoints
