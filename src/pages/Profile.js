@@ -44,7 +44,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!user) navigate("/login");
-    else setFormData({ username: user.username || "", email: user.email || "" });
+    else setFormData({ username: user.name || "", email: user.email || "" });
   }, [user, navigate]);
 
   const handleLogout = () => {
@@ -152,7 +152,7 @@ export default function Profile() {
 
                   <Box>
                     <Typography fontSize={{ xs: 18, md: 24 }} fontWeight={700}>
-                      {user.username || "User"}
+                      {user.name || "User"}
                     </Typography>
                     <Typography color="text.secondary">
                       {user.email}

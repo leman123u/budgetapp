@@ -44,10 +44,16 @@ export default function ResetPassword() {
     try {
       setLoading(true);
 
-      await axios.post("http://127.0.0.1:8080/reset-password", {
-        token,
-        password
-      });
+    await axios.post(
+  "https://backendrender-3-ehrl.onrender.com/api/app_users/reset-password",
+  null,
+  {
+    params: {
+      token,
+      password
+    }
+  }
+);
 
       setMessage("Password successfully reset!");
 

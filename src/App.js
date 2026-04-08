@@ -12,13 +12,23 @@ import SavingsGoals from './pages/SavingsGoals';
 import LoginPage from './pages/LoginPage';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import Help from "./pages/Help";
 
 // EXTRA PAGES
 import Settings from './pages/Settings';
 import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword'; // ✅ ƏLAVƏ OLUNDU
+import ResetPassword from './pages/ResetPassword';
 import Insights from './pages/Insights';
 import Premium from './pages/Premium';
+
+// AI PAGE
+import AIChat from './pages/AIChat';
+
+// PRIVACY POLICY
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+
+// ✅ PLATFORM RULES
+import PlatformRules from "./pages/PlatformRules";
 
 const theme = createTheme({
   palette: {
@@ -50,7 +60,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} /> {/* ✅ BURASI */}
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* MAIN */}
           <Route path="/dashboard" element={<DashboardMock />} />
@@ -61,6 +71,18 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/insights" element={<Insights />} />
+
+          {/* HELP */}
+          <Route path="/help" element={<Help />} />
+
+          {/* PRIVACY POLICY */}
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
+          {/* ✅ PLATFORM RULES */}
+          <Route path="/platform-rules" element={<PlatformRules />} />
+
+          {/* AI CHAT */}
+          <Route path="/ai" element={<AIChat />} />
 
           {/* PREMIUM */}
           <Route

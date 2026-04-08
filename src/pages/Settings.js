@@ -15,10 +15,22 @@ import {
   Stack,
   Select,
   MenuItem,
+  Chip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Divider
 } from "@mui/material";
+
 import { useTheme } from "@mui/material/styles";
 import Sidebar from "../components/dashboard/Sidebar";
 import { setLanguage } from "../i18n";
+import { TextField, Button } from "@mui/material";
+
+
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const LANGUAGES = [
   { code: "en", label: "English", sub: "United Kingdom", flag: "https://flagcdn.com/w40/gb.png" },
@@ -42,15 +54,42 @@ const LANGUAGES = [
 
 export default function Settings() {
   const [languageOpen, setLanguageOpen] = useState(false);
+  
   const [currentLang, setCurrentLang] = useState("en");
-
-  const [currency, setCurrency] = useState("USD"); // ✅ əlavə edildi
-
+  const [currency, setCurrency] = useState("USD");
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [expenseAlerts, setExpenseAlerts] = useState(true);
   const [budgetAlerts, setBudgetAlerts] = useState(true);
   const [monthlySummary, setMonthlySummary] = useState(true);
+  const [email, setEmail] = useState("");
+const [message, setMessage] = useState("");
+const [loading, setLoading] = useState(false);
 
+const handleSupportSubmit = async () => {
+  try {
+    setLoading(true);
+
+    const response = await fetch(  "https://backendrender-3-ehrl.onrender.com/api/app_users/support",
+ {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, message }),
+    });
+
+    if (!response.ok) throw new Error();
+
+    alert("Message sent successfully!");
+    setEmail("");
+    setMessage("");
+  } catch (error) {
+    alert("Error sending message");
+  } finally {
+    setLoading(false);
+  }
+};
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -61,7 +100,7 @@ export default function Settings() {
       setLanguage(saved);
     }
 
-    const savedCurrency = localStorage.getItem("app_currency"); // ✅ əlavə edildi
+    const savedCurrency = localStorage.getItem("app_currency");
     if (savedCurrency) {
       setCurrency(savedCurrency);
     }
@@ -108,7 +147,7 @@ export default function Settings() {
           onClick={() => setLanguageOpen(true)}
           sx={{
             p: 3,
-            borderRadius:"25px",
+            borderRadius: 3,
             border: "1px solid #E8E2DB",
             maxWidth: 600,
             cursor: "pointer",
@@ -126,7 +165,7 @@ export default function Settings() {
           <Avatar src={selected.flag} sx={{ width: 28, height: 28 }} />
         </Paper>
 
-        {/* ✅ CURRENCY əlavə edildi */}
+        {/* CURRENCY */}
         <Paper
           sx={{
             p: 3,
@@ -222,6 +261,118 @@ export default function Settings() {
             </Box>
           )}
         </Paper>
+
+    
+       {/* ABOUT & SUPPORT */}
+<Paper
+  onClick={() => setAboutOpen(true)}
+  sx={{
+    p: 0,
+    mt: 2,
+    borderRadius: 3,
+    border: "1px solid #E8E2DB",
+    maxWidth: 600,
+    cursor: "pointer",
+  }}
+>
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      px: 3,
+      py: 2,
+    }}
+  >
+    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+      <InfoOutlinedIcon sx={{ color: "#555" }} />
+      <Typography fontWeight={500}>
+        About & Support
+      </Typography>
+    </Box>
+
+    <ChevronRightIcon sx={{ color: "#999" }} />
+  </Box>
+</Paper>
+
+{/* ABOUT & SUPPORT DIALOG */}
+<Dialog
+ open={aboutOpen}
+  onClose={() => setAboutOpen(false)}
+  fullWidth
+  fullScreen={isMobile}
+>
+  <DialogTitle sx={{ fontWeight: 700 }}>
+    About & Support
+  </DialogTitle>
+
+  <DialogContent>
+
+    <List>
+
+      {/* VERSION */}
+      <ListItemText
+        primary="Version"
+        secondary="0.1.0"
+        sx={{ mb: 2 }}
+      />
+
+      {/* PRIVACY POLICY */}
+      <ListItemButton
+        onClick={() => window.open("/privacy-policy", "_blank")}
+      >
+        <ListItemText primary="Privacy Policy" />
+        <ChevronRightIcon />
+      </ListItemButton>
+
+      {/* PLATFORM RULES */}
+      <ListItemButton
+        onClick={() => window.open("/platform-rules", "_blank")}
+      >
+        <ListItemText primary="Platform Rules" />
+        <ChevronRightIcon />
+      </ListItemButton>
+
+    </List>
+
+    <Divider sx={{ my: 2 }} />
+
+    {/* 🔥 SUPPORT FORM */}
+    <Typography fontWeight={600} mb={1}>
+      Contact Support
+    </Typography>
+
+    <TextField
+      label="Your Email"
+      fullWidth
+      margin="normal"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+    />
+
+    <TextField
+      label="Message"
+      fullWidth
+      multiline
+      rows={4}
+      margin="normal"
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+    />
+
+    <Button
+      variant="contained"
+      fullWidth
+      sx={{ mt: 2 }}
+      onClick={handleSupportSubmit}
+      disabled={loading}
+    >
+      {loading ? "Sending..." : "Send Message"}
+    </Button>
+
+  </DialogContent>
+</Dialog>
+
 
         {/* LANGUAGE MODAL */}
         <Dialog

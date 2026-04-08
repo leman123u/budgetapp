@@ -24,7 +24,8 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import InsightsOutlinedIcon from "@mui/icons-material/InsightsOutlined";
-import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined"; // ✅ PREMIUM ICON
+import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"; // ✅ HELP ICON
 
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -41,36 +42,13 @@ const Sidebar = () => {
 
   // ===== MAIN MENU =====
   const menuItems = [
-    {
-      label: "Dashboard",
-      path: "/dashboard-live",
-      icon: <DashboardOutlinedIcon />,
-    },
-    {
-      label: "Budgets",
-      path: "/budgets",
-      icon: <AccountBalanceWalletOutlinedIcon />,
-    },
-    {
-      label: "Expenses",
-      path: "/expenses",
-      icon: <ReceiptLongOutlinedIcon />,
-    },
-    {
-      label: "Goals",
-      path: "/goals",
-      icon: <FlagOutlinedIcon />,
-    },
-    {
-      label: "Insights",
-      path: "/insights",
-      icon: <InsightsOutlinedIcon />,
-    },
-    {
-      label: "Premium", // ✅ ƏLAVƏ EDİLDİ
-      path: "/premium",
-      icon: <WorkspacePremiumOutlinedIcon />,
-    },
+    { label: "Dashboard", path: "/dashboard-live", icon: <DashboardOutlinedIcon /> },
+    { label: "Budgets", path: "/budgets", icon: <AccountBalanceWalletOutlinedIcon /> },
+    { label: "Expenses", path: "/expenses", icon: <ReceiptLongOutlinedIcon /> },
+    { label: "Goals", path: "/goals", icon: <FlagOutlinedIcon /> },
+    { label: "Insights", path: "/insights", icon: <InsightsOutlinedIcon /> },
+    { label: "Premium", path: "/premium", icon: <WorkspacePremiumOutlinedIcon /> },
+    { label: "Help", path: "/help", icon: <InfoOutlinedIcon /> }, // ✅ ƏLAVƏ EDİLDİ
   ];
 
   const handleLogout = () => {
@@ -99,9 +77,8 @@ const Sidebar = () => {
         flexDirection: "column",
       }}
     >
-      {/* HEADER */}
       <Box sx={{ p: 3, borderBottom: "1px solid #E5E7EB" }}>
-        <Typography sx={{ fontWeight: 800, fontSize: 20, color: "#111827" }}>
+        <Typography sx={{ fontWeight: 800, fontSize: 20 }}>
           Personal Budget
         </Typography>
         <Typography sx={{ fontSize: 12, color: "#6B7280" }}>
@@ -109,7 +86,6 @@ const Sidebar = () => {
         </Typography>
       </Box>
 
-      {/* ===== TOP MENU ===== */}
       <List sx={{ flex: 1, pt: 3, px: 2 }}>
         {menuItems.map((item) => {
           const active = isActive(item.path);
@@ -126,9 +102,7 @@ const Sidebar = () => {
                   borderRadius: 2,
                   color: active ? "#111827" : "#374151",
                   backgroundColor: active ? "#F3F4F6" : "transparent",
-                  "&:hover": {
-                    backgroundColor: "#F3F4F6",
-                  },
+                  "&:hover": { backgroundColor: "#F3F4F6" },
                 }}
               >
                 <ListItemIcon
@@ -155,36 +129,27 @@ const Sidebar = () => {
 
       <Divider />
 
-      {/* ===== BOTTOM MENU ===== */}
       <Box sx={{ p: 2 }}>
         <ListItemButton
-          onClick={() => {
-            navigate("/profile");
-            if (isMobile) setOpen(false);
-          }}
-          sx={{ color: "#374151" }}
+          onClick={() => navigate("/profile")}
         >
-          <ListItemIcon sx={{ minWidth: 36, color: "#6B7280" }}>
+          <ListItemIcon sx={{ minWidth: 36 }}>
             <PersonOutlineOutlinedIcon />
           </ListItemIcon>
           <ListItemText primary="Profile" />
         </ListItemButton>
 
         <ListItemButton
-          onClick={() => {
-            navigate("/settings");
-            if (isMobile) setOpen(false);
-          }}
-          sx={{ color: "#374151" }}
+          onClick={() => navigate("/settings")}
         >
-          <ListItemIcon sx={{ minWidth: 36, color: "#6B7280" }}>
+          <ListItemIcon sx={{ minWidth: 36 }}>
             <SettingsOutlinedIcon />
           </ListItemIcon>
           <ListItemText primary="Settings" />
         </ListItemButton>
 
-        <ListItemButton onClick={handleLogout} sx={{ color: "#374151" }}>
-          <ListItemIcon sx={{ minWidth: 36, color: "#6B7280" }}>
+        <ListItemButton onClick={handleLogout}>
+          <ListItemIcon sx={{ minWidth: 36 }}>
             <LogoutOutlinedIcon />
           </ListItemIcon>
           <ListItemText primary="Logout" />
@@ -193,36 +158,32 @@ const Sidebar = () => {
     </Box>
   );
 
-  return (
+  return isMobile ? (
     <>
-      {isMobile && (
-        <IconButton
-          onClick={() => setOpen(true)}
-          sx={{ position: "fixed", top: 15, left: 15, zIndex: 1300 }}
-        >
-          <MenuIcon />
-        </IconButton>
-      )}
+      <IconButton
+        onClick={() => setOpen(true)}
+        sx={{ position: "fixed", top: 15, left: 15, zIndex: 1300 }}
+      >
+        <MenuIcon />
+      </IconButton>
 
-      {isMobile ? (
-        <Drawer open={open} onClose={() => setOpen(false)}>
-          {sidebarContent}
-        </Drawer>
-      ) : (
-        <Box
-          sx={{
-            width: 260,
-            position: "fixed",
-            left: 0,
-            top: 0,
-            height: "100vh",
-            borderRight: "1px solid #E5E7EB",
-          }}
-        >
-          {sidebarContent}
-        </Box>
-      )}
+      <Drawer open={open} onClose={() => setOpen(false)}>
+        {sidebarContent}
+      </Drawer>
     </>
+  ) : (
+    <Box
+      sx={{
+        width: 260,
+        position: "fixed",
+        left: 0,
+        top: 0,
+        height: "100vh",
+        borderRight: "1px solid #E5E7EB",
+      }}
+    >
+      {sidebarContent}
+    </Box>
   );
 };
 
