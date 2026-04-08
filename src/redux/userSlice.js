@@ -10,9 +10,14 @@ export const login = createAsyncThunk(
       return res.data;
     } catch (error) {
       let message = "Login failed";
+      const data = error.response?.data;
 
-      if (error.response?.data?.message) {
-        message = error.response.data.message;
+      if (typeof data === "string" && data.trim()) {
+        message = data;
+      } else if (data?.message) {
+        message = data.message;
+      } else if (data?.error) {
+        message = typeof data.error === "string" ? data.error : message;
       } else if (error.response?.status === 401) {
         message = "Invalid email or password";
       } else if (!error.response) {
@@ -30,12 +35,17 @@ export const register = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const res = await registerUser(data);
-      return res.data; // backend UserEntity qaytarır
+      return res.data;
     } catch (error) {
       let message = "Register failed";
+      const data = error.response?.data;
 
-      if (error.response?.data?.message) {
-        message = error.response.data.message;
+      if (typeof data === "string" && data.trim()) {
+        message = data;
+      } else if (data?.message) {
+        message = data.message;
+      } else if (data?.error) {
+        message = typeof data.error === "string" ? data.error : message;
       } else if (error.response?.status === 409) {
         message = "Email already exists";
       } else if (!error.response) {
@@ -51,6 +61,7 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     user: null,
+    token: localStorage.getItem("token") || null, // 🔥 əlavə edildi
     loading: false,
     error: null,
   },
@@ -58,6 +69,7 @@ const userSlice = createSlice({
   reducers: {
     logout(state) {
       state.user = null;
+      state.token = null;
       state.error = null;
       localStorage.removeItem("token");
     },
@@ -76,11 +88,15 @@ const userSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+
+        localStorage.setItem("token", action.payload.token);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || "Login error";
       })
 
       // ===== REGISTER =====
@@ -90,11 +106,11 @@ const userSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload.user || action.payload;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || "Register error";
       });
   },
 });

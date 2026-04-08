@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Box, Paper, Typography, TextField, Button, Alert } from "@mui/material";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { forgotPassword } from "../services/userService";
 
 export default function ForgotPassword() {
+
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -21,19 +22,17 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      await axios.post(
-        "http://localhost:8080/api/v1/app_users/forgot-password",
-        { email }
-      );
-
+      await forgotPassword(email);
       setSent(true);
     } catch (err) {
-      console.log("ERROR:", err.response);
-      setError(
-        err.response?.data?.message ||
-        err.response?.data ||
-        "Something went wrong. Try again."
-      );
+      const data = err?.response?.data;
+      const msg =
+        (typeof data === "string" && data) ||
+        data?.message ||
+        data?.error ||
+        err?.message ||
+        "Something went wrong";
+      setError(msg);
     } finally {
       setLoading(false);
     }
