@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import axios from "../config/axios";
+import axiosInstance from "../config/api";
 import SendIcon from "@mui/icons-material/Send";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import AddIcon from "@mui/icons-material/Add";
@@ -32,17 +32,53 @@ export default function AIChat() {
     setMessage("");
     setLoading(true);
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setChat((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          text: "Please **log in** first — the AI assistant uses your account on the server.",
+        },
+      ]);
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await axios.post("/ai/ask", { prompt: msg });
+      const res = await axiosInstance.post("/ai/ask", { prompt: msg });
 
-      setChat(prev => [...prev,
-        { role: "assistant", text: res.data }
-      ]);
+      const payload = res.data;
+      const reply =
+        typeof payload === "string"
+          ? payload
+          : payload?.message ?? payload?.answer ?? JSON.stringify(payload);
 
-    } catch {
-      setChat(prev => [...prev,
-        { role: "assistant", text: "AI unavailable (check API quota)." }
-      ]);
+      setChat((prev) => [...prev, { role: "assistant", text: reply }]);
+    } catch (err) {
+      const status = err.response?.status;
+      const data = err.response?.data;
+      let reply =
+        typeof data === "string"
+          ? data
+          : data?.message || data?.error || null;
+
+      if (status === 401 || status === 403) {
+        reply =
+          reply ||
+          "Access denied. Log in again — the AI endpoint requires a valid session.";
+      } else if (status === 429) {
+        reply = reply || "Too many requests. Try again in a minute.";
+      } else if (!err.response) {
+        reply =
+          err.message === "Network Error"
+            ? "Cannot reach the server. Check your connection."
+            : reply || "Request failed.";
+      } else {
+        reply = reply || `AI request failed (${status}).`;
+      }
+
+      setChat((prev) => [...prev, { role: "assistant", text: reply }]);
     }
 
     setLoading(false);
