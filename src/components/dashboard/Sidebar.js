@@ -25,6 +25,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import InsightsOutlinedIcon from "@mui/icons-material/InsightsOutlined";
 import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
+import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"; // ✅ HELP ICON
 
 import { useNavigate, useLocation } from "react-router-dom";
@@ -45,6 +46,7 @@ const Sidebar = () => {
     { label: "Dashboard", path: "/dashboard-live", icon: <DashboardOutlinedIcon /> },
     { label: "Budgets", path: "/budgets", icon: <AccountBalanceWalletOutlinedIcon /> },
     { label: "Expenses", path: "/expenses", icon: <ReceiptLongOutlinedIcon /> },
+    { label: "AI Assistant", path: "/ai", icon: <SmartToyOutlinedIcon /> },
     { label: "Goals", path: "/goals", icon: <FlagOutlinedIcon /> },
     { label: "Insights", path: "/insights", icon: <InsightsOutlinedIcon /> },
     { label: "Premium", path: "/premium", icon: <WorkspacePremiumOutlinedIcon /> },
