@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Box, TextField, Button, Typography, Paper } from "@mui/material";
-import axios from "axios";
+import { resetPassword } from "../services/userService";
 
 export default function ResetPassword() {
 
   const [params] = useSearchParams();
   const navigate = useNavigate();
 
-  const token = params.get("token");
+  const token = useMemo(() => (params.get("token") || "").trim(), [params]);
 
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -44,27 +44,26 @@ export default function ResetPassword() {
     try {
       setLoading(true);
 
-    await axios.post(
-  "https://backendrender-3-ehrl.onrender.com/api/app_users/reset-password",
-  null,
-  {
-    params: {
-      token,
-      password
-    }
-  }
-);
+      await resetPassword(token, password);
 
       setMessage("Password successfully reset!");
 
       setTimeout(() => navigate("/login"), 2000);
 
     } catch (err) {
+      const data = err?.response?.data;
 
-      if (err.response?.data)
-        setError(err.response.data);
-      else
-        setError("Invalid or expired token");
+      if (typeof data === "string" && data.trim()) {
+        setError(data);
+      } else if (data?.message) {
+        setError(data.message);
+      } else if (data?.error) {
+        setError(data.error);
+      } else {
+        setError(
+          "Cannot reach server. This is often a CORS issue on Vercel preview domains."
+        );
+      }
 
     } finally {
       setLoading(false);
