@@ -1,0 +1,12 @@
+{
+  "expenses_by_category": "カテゴリ別支出",
+  "food": "食費",
+  "travel": "旅行",
+  "bills": "請求書",
+  "shopping": "買い物",
+  "monthly_budget": "月間予算と実際の支出",
+  "actual": "実績",
+  "budget": "予算",
+  "search": "検索",
+  "logout": "ログアウト"
+}

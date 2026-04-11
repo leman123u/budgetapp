@@ -1,0 +1,12 @@
+{
+  "expenses_by_category": "Expenses by Category",
+  "food": "Food",
+  "travel": "Travel",
+  "bills": "Bills",
+  "shopping": "Shopping",
+  "monthly_budget": "Monthly Budget vs Actual",
+  "actual": "Actual",
+  "budget": "Budget",
+  "search": "Search",
+  "logout": "Logout"
+}

@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "../components"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../pages"
+		},
+		{
+			"path": "../redux"
+		},
+		{
+			"path": "../services"
+		},
+		{
+			"path": "../styles"
+		}
+	]
+}

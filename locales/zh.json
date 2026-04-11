@@ -1,0 +1,12 @@
+{
+  "expenses_by_category": "按类别划分的支出",
+  "food": "餐饮",
+  "travel": "旅行",
+  "bills": "账单",
+  "shopping": "购物",
+  "monthly_budget": "每月预算和实际支出",
+  "actual": "实际",
+  "budget": "预算",
+  "search": "搜索",
+  "logout": "退出登录"
+}

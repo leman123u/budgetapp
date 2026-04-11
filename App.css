@@ -1,0 +1,84 @@
+.dashboard {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ===== TITLE ===== */
+.dashboard-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 32px;
+}
+
+/* ===== SUMMARY CARDS ===== */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+/* ===== CHARTS ===== */
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr;
+  gap: 24px;
+}
+
+.chart-card {
+  width: 100%;
+  height: auto;
+  min-height: 360px;
+  overflow-x: auto;
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+/* ===================== */
+/* TABLET */
+/* ===================== */
+
+@media (max-width: 1024px) {
+
+  .dashboard {
+    padding: 20px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-charts {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+/* ===================== */
+/* MOBILE */
+/* ===================== */
+
+@media (max-width: 600px) {
+
+  .dashboard {
+    padding: 16px;
+  }
+
+  .dashboard-title {
+    font-size: 22px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card {
+    min-height: 280px;
+  }
+
+}
