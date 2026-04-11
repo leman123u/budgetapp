@@ -1,0 +1,130 @@
+import React, { useMemo, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { Box, TextField, Button, Typography, Paper } from "@mui/material";
+import { resetPassword } from "../services/userService";
+
+export default function ResetPassword() {
+
+  const [params] = useSearchParams();
+  const navigate = useNavigate();
+
+  const token = useMemo(() => (params.get("token") || "").trim(), [params]);
+
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+
+    setError("");
+    setMessage("");
+
+    if (!token) {
+      setError("Invalid reset link");
+      return;
+    }
+
+    if (!password || !confirm) {
+      setError("Please fill all fields");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    if (password !== confirm) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      await resetPassword(token, password);
+
+      setMessage("Password successfully reset!");
+
+      setTimeout(() => navigate("/login"), 2000);
+
+    } catch (err) {
+      const data = err?.response?.data;
+
+      if (typeof data === "string" && data.trim()) {
+        setError(data);
+      } else if (data?.message) {
+        setError(data.message);
+      } else if (data?.error) {
+        setError(data.error);
+      } else {
+        setError(
+          "Cannot reach server. This is often a CORS issue on Vercel preview domains."
+        );
+      }
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Box sx={{
+      height: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#f4f6f8"
+    }}>
+      <Paper elevation={4} sx={{ padding: 4, width: 350, borderRadius: 4 }}>
+
+        <Typography variant="h5" mb={2} textAlign="center">
+          Reset Password
+        </Typography>
+
+        <TextField
+          label="New Password"
+          type="password"
+          fullWidth
+          margin="normal"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+
+        <TextField
+          label="Confirm Password"
+          type="password"
+          fullWidth
+          margin="normal"
+          value={confirm}
+          onChange={e => setConfirm(e.target.value)}
+        />
+
+        {error && (
+          <Typography color="error" mt={1}>
+            {error}
+          </Typography>
+        )}
+
+        {message && (
+          <Typography color="success.main" mt={1}>
+            {message}
+          </Typography>
+        )}
+
+        <Button
+          variant="contained"
+          fullWidth
+          sx={{ mt: 2 }}
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? "Processing..." : "Reset Password"}
+        </Button>
+
+      </Paper>
+    </Box>
+  );
+}

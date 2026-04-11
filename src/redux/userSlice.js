@@ -1,13 +1,40 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginUser, registerUser } from "../services/userService";
 
+const USER_STORAGE_KEY = "user";
+
+function readStoredUser() {
+  try {
+    const raw = localStorage.getItem(USER_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+/** Map common API shapes to { token, user } */
+function normalizeAuthResponse(data) {
+  if (!data) return data;
+  const token =
+    data.token ?? data.accessToken ?? data.access_token ?? data.jwt;
+  let user = data.user ?? null;
+  if (!user && data.id != null) {
+    user = data;
+  }
+  if (user && user.id == null && user._id != null) {
+    user = { ...user, id: user._id };
+  }
+  return { token, user };
+}
+
 // ================= LOGIN =================
 export const login = createAsyncThunk(
   "user/login",
   async (data, { rejectWithValue }) => {
     try {
       const res = await loginUser(data);
-      return res.data;
+      return normalizeAuthResponse(res.data);
     } catch (error) {
       let message = "Login failed";
       const data = error.response?.data;
@@ -60,8 +87,8 @@ export const register = createAsyncThunk(
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    user: null,
-    token: localStorage.getItem("token") || null, // 🔥 əlavə edildi
+    user: readStoredUser(),
+    token: localStorage.getItem("token") || null,
     loading: false,
     error: null,
   },
@@ -72,6 +99,7 @@ const userSlice = createSlice({
       state.token = null;
       state.error = null;
       localStorage.removeItem("token");
+      localStorage.removeItem(USER_STORAGE_KEY);
     },
     clearError(state) {
       state.error = null;
@@ -89,10 +117,22 @@ const userSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
 
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.user = action.payload.user ?? null;
+        state.token = action.payload.token ?? null;
 
-        localStorage.setItem("token", action.payload.token);
+        if (action.payload.token) {
+          localStorage.setItem("token", action.payload.token);
+        } else {
+          localStorage.removeItem("token");
+        }
+        if (action.payload.user) {
+          localStorage.setItem(
+            USER_STORAGE_KEY,
+            JSON.stringify(action.payload.user)
+          );
+        } else {
+          localStorage.removeItem(USER_STORAGE_KEY);
+        }
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -106,7 +146,11 @@ const userSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user || action.payload;
+        const u = action.payload.user || action.payload;
+        state.user = u;
+        if (u && typeof u === "object") {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(u));
+        }
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;

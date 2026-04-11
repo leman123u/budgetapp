@@ -1,0 +1,12 @@
+{
+  "expenses_by_category": "Gastos por categoría",
+  "food": "Comida",
+  "travel": "Viajes",
+  "bills": "Facturas",
+  "shopping": "Compras",
+  "monthly_budget": "Presupuesto mensual y gastos reales",
+  "actual": "Real",
+  "budget": "Presupuesto",
+  "search": "Buscar",
+  "logout": "Cerrar sesión"
+}

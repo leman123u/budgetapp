@@ -11,7 +11,8 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true,
+  // JWT is sent via Authorization header; cookies not required. false avoids strict CORS credential rules.
+  withCredentials: false,
 });
 
 axiosInstance.interceptors.request.use(
@@ -41,6 +42,7 @@ axiosInstance.interceptors.response.use(
         error.config?.headers?.Authorization
       ) {
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
         window.location.href = "/login";
       }
 

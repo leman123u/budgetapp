@@ -33,9 +33,7 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await dispatch(login(form));
-    if (login.fulfilled?.match?.(result)) {
-      result.payload?.token &&
-        localStorage.setItem("token", result.payload.token);
+    if (login.fulfilled.match(result)) {
       navigate("/");
     }
   };

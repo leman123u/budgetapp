@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
+      <module fileurl="file://$PROJECT_DIR$/.idea/personal-budget-app.iml" filepath="$PROJECT_DIR$/.idea/personal-budget-app.iml" />
+=======
       <module fileurl="file://$PROJECT_DIR$/.idea/src.iml" filepath="$PROJECT_DIR$/.idea/src.iml" />
+>>>>>>> f05caa3 (fix axios and android login)
     </modules>
   </component>
 </project>

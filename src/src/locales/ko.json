@@ -1,0 +1,12 @@
+{
+  "expenses_by_category": "카테고리별 지출",
+  "food": "식비",
+  "travel": "여행",
+  "bills": "청구서",
+  "shopping": "쇼핑",
+  "monthly_budget": "월별 예산 및 실제 지출",
+  "actual": "실제",
+  "budget": "예산",
+  "search": "검색",
+  "logout": "로그아웃"
+}

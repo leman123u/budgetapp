@@ -1,0 +1,12 @@
+{
+  "expenses_by_category": "Расходы по категориям",
+  "food": "Еда",
+  "travel": "Путешествия",
+  "bills": "Счета",
+  "shopping": "Покупки",
+  "monthly_budget": "Бюджет и фактические",
+  "actual": "Фактические",
+  "budget": "Бюджет",
+  "search": "Поиск",
+  "logout": "Выйти"
+}

@@ -1,0 +1,12 @@
+{
+  "expenses_by_category": "Kategoriye göre harcamalar",
+  "food": "Yemek",
+  "travel": "Seyahat",
+  "bills": "Faturalar",
+  "shopping": "Alışveriş",
+  "monthly_budget": "Aylık bütçe ve gerçek harcamalar",
+  "actual": "Gerçek",
+  "budget": "Bütçe",
+  "search": "Ara",
+  "logout": "Çıkış yap"
+}
