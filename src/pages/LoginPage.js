@@ -65,6 +65,7 @@ export default function LoginPage() {
         <Box component="form" onSubmit={handleSubmit}>
           <TextField
             fullWidth
+            type="email"
             placeholder="Email"
             value={form.email}
             onChange={(e) => {
