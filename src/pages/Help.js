@@ -12,12 +12,13 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SearchIcon from "@mui/icons-material/Search";
-import axiosInstance from "../config/api"; // ✅ əlavə etdim
+import { sendSupport } from "../services/userService";
 
 export default function Help() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [supportError, setSupportError] = useState("");
   const [search, setSearch] = useState("");
   const [bug, setBug] = useState("");
 
@@ -54,19 +55,30 @@ export default function Help() {
   );
 
   const handleSupportSubmit = async () => {
+    setSupportError("");
+    if (!email.trim() || !message.trim()) {
+      setSupportError("Please enter your email and a message.");
+      return;
+    }
+
     try {
       setLoading(true);
-
-      await axiosInstance.post("/support", {
-        email,
-        message,
+      await sendSupport({
+        email: email.trim(),
+        message: message.trim(),
       });
-
       alert("Message sent successfully!");
       setEmail("");
       setMessage("");
     } catch (error) {
-      alert("Error sending message");
+      const data = error?.response?.data;
+      const msg =
+        (typeof data === "string" && data.trim()) ||
+        data?.message ||
+        (error.response?.status
+          ? `Could not send (${error.response.status}).`
+          : "Cannot reach the server.");
+      setSupportError(msg);
     } finally {
       setLoading(false);
     }
@@ -135,7 +147,10 @@ export default function Help() {
           label="Your Email"
           margin="normal"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (supportError) setSupportError("");
+          }}
         />
 
         <TextField
@@ -145,8 +160,17 @@ export default function Help() {
           multiline
           rows={4}
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            if (supportError) setSupportError("");
+          }}
         />
+
+        {supportError && (
+          <Typography color="error" sx={{ mt: 1, fontSize: 14 }}>
+            {supportError}
+          </Typography>
+        )}
 
         <Button
           variant="contained"
