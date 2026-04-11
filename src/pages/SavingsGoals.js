@@ -17,25 +17,12 @@ import {
   IconButton,
   LinearProgress,
   Chip,
-  AppBar,
-  Toolbar,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  InputAdornment,
 } from "@mui/material";
 
 import { Edit, Delete, Add } from "@mui/icons-material";
-import SearchIcon from "@mui/icons-material/Search";
-import MenuIcon from "@mui/icons-material/Menu";
-import useMediaQuery from "@mui/material/useMediaQuery";
-
-import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logout } from "../redux/userSlice";
 
 import Sidebar from "../components/dashboard/Sidebar";
+import AppHeaderBar from "../components/AppHeaderBar";
 
 const UI = {
   primary: "#1A3263",
@@ -53,26 +40,6 @@ const goals = [
 
 export default function Goals() {
   const [status, setStatus] = useState("All");
-  const [open, setOpen] = useState(false);
-
-  const isMobile = useMediaQuery("(max-width:768px)");
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const navLinks = [
-    { label: "Dashboard", path: "/dashboard" },
-    { label: "Budgets", path: "/budgets" },
-    { label: "Expenses", path: "/expenses" },
-    { label: "Goals", path: "/goals" },
-    { label: "Profile", path: "/profile" },
-  ];
-
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
 
   const filtered = useMemo(() => {
     if (status === "All") return goals;
@@ -84,129 +51,7 @@ export default function Goals() {
 
   return (
     <>
-      {/* ===== HEADER ===== */}
-      <AppBar position="fixed" elevation={0} sx={{ bgcolor: "#1F2937" }}>
-        <Toolbar sx={{ justifyContent: "space-between", px: 2 }}>
-
-          {/* LOGO */}
-          <Box
-            component="img"
-            src="/logo.png.png"
-            sx={{ height: 40, cursor: "pointer" }}
-            onClick={() => navigate("/dashboard")}
-          />
-
-          {/* DESKTOP */}
-          {!isMobile && (
-            <Box display="flex" alignItems="center" gap={2}>
-              {navLinks.map((link) => (
-                <Button
-                  key={link.path}
-                  component={RouterLink}
-                  to={link.path}
-                  sx={{
-                    color: "#fff",
-                    textTransform: "none",
-                    fontWeight:
-                      location.pathname === link.path ? 700 : 400,
-                  }}
-                >
-                  {link.label}
-                </Button>
-              ))}
-
-              <TextField
-                size="small"
-                placeholder="Search"
-                sx={{
-                  bgcolor: "#fff",
-                  borderRadius: 2,
-                  width: 160,
-                  "& fieldset": { border: "none" },
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <Button
-                onClick={handleLogout}
-                sx={{
-                  bgcolor: "#374151",
-                  color: "#fff",
-                  borderRadius: 2,
-                  textTransform: "none",
-                }}
-              >
-                Logout
-              </Button>
-            </Box>
-          )}
-
-          {/* MOBILE */}
-          {isMobile && (
-            <Box display="flex" alignItems="center" gap={1}>
-              <TextField
-                size="small"
-                placeholder="Search"
-                sx={{
-                  bgcolor: "#fff",
-                  borderRadius: 2,
-                  width: 120,
-                  "& fieldset": { border: "none" },
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <Button
-                onClick={handleLogout}
-                sx={{
-                  bgcolor: "#374151",
-                  color: "#fff",
-                  px: 1.5,
-                  borderRadius: 2,
-                  fontSize: 12,
-                  textTransform: "none",
-                }}
-              >
-                Logout
-              </Button>
-
-              <IconButton onClick={() => setOpen(true)} sx={{ color: "#fff" }}>
-                <MenuIcon />
-              </IconButton>
-            </Box>
-          )}
-        </Toolbar>
-      </AppBar>
-
-      {/* MOBILE DRAWER */}
-      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
-        <Box sx={{ width: 240, p: 2 }}>
-          <List>
-            {navLinks.map((link) => (
-              <ListItem
-                key={link.path}
-                component={RouterLink}
-                to={link.path}
-                onClick={() => setOpen(false)}
-              >
-                <ListItemText primary={link.label} />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
+      <AppHeaderBar />
 
       {/* ===== GOALS CONTENT ===== */}
       <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#fafafa", pt: 10 }}>

@@ -24,13 +24,18 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useSelector((s) => s.user);
-  const isMobile = useMediaQuery("(max-width:768px)");
+  const isMobile = useMediaQuery("(max-width:768px)", { noSsr: true });
   const [open, setOpen] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("token");
     navigate("/login");
+  };
+
+  const handleMenuToggle = (e) => {
+    e?.stopPropagation?.();
+    setOpen((v) => !v);
   };
 
   const navLinks = [
@@ -50,6 +55,7 @@ export default function Navbar() {
           bgcolor: "#fff",
           borderBottom: "1px solid #E5E7EB",
           width: "100%",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
       >
         <Toolbar
@@ -58,9 +64,11 @@ export default function Navbar() {
             display: "flex",
             alignItems: "center",
             width: "100%",
+            flexWrap: "nowrap",
+            overflow: "hidden",
+            gap: 1,
           }}
         >
-          {/* Logo */}
           <Typography
             component={RouterLink}
             to="/dashboard"
@@ -70,12 +78,13 @@ export default function Navbar() {
               textDecoration: "none",
               fontSize: { xs: 14, md: 18 },
               whiteSpace: "nowrap",
+              flexShrink: 1,
+              minWidth: 0,
             }}
           >
             MyBudget
           </Typography>
 
-          {/* Desktop nav */}
           {!isMobile && (
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, ml: 3 }}>
               {navLinks.map((link) => (
@@ -115,17 +124,29 @@ export default function Navbar() {
                   <IconButton size="small">
                     <Notifications fontSize="small" />
                   </IconButton>
-                  <Button onClick={handleLogout}>Logout</Button>
+                  <Button type="button" onClick={handleLogout}>
+                    Logout
+                  </Button>
                 </>
               )}
             </Box>
           )}
 
-          {/* Mobile hamburger */}
           {isMobile && (
             <IconButton
-              onClick={() => setOpen(true)}
-              sx={{ ml: "auto", p: 0.5 }}
+              type="button"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              onClick={handleMenuToggle}
+              sx={{
+                ml: "auto",
+                p: 0.5,
+                flexShrink: 0,
+                position: "relative",
+                zIndex: 2,
+                touchAction: "manipulation",
+                WebkitTapHighlightColor: "transparent",
+              }}
             >
               <Menu />
             </IconButton>
@@ -133,8 +154,12 @@ export default function Navbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Mobile Drawer */}
-      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={() => setOpen(false)}
+        ModalProps={{ keepMounted: true }}
+      >
         <Box sx={{ width: 240, p: 2 }}>
           <List>
             {navLinks.map((link) => (
