@@ -99,43 +99,19 @@ export default function Budgets() {
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#fafafa" }}>
-      {/* TOP MENU */}
-      <AppBar position="fixed" elevation={0} sx={{ bgcolor: "#1F2937", maxWidth: "100vw" }}>
-        <Toolbar
-          sx={{
-            justifyContent: "space-between",
-            px: { xs: 1, sm: 2 },
-            gap: { xs: 0.5, sm: 1 },
-            minHeight: { xs: 56, sm: 64 },
-            maxWidth: "100%",
-            boxSizing: "border-box",
-          }}
-        >
+      {/* APPBAR FIX */}
+      <AppBar position="fixed" elevation={0} sx={{ bgcolor: "#1F2937" }}>
+        <Toolbar sx={{ justifyContent: "space-between", px: 2, flexWrap: "wrap" }}>
           <Box
             component="img"
             src="/logo.png.png"
             alt=""
-            sx={{
-              height: { xs: 32, sm: 40 },
-              cursor: "pointer",
-              flexShrink: 0,
-              maxWidth: "min(112px, 36vw)",
-              objectFit: "contain",
-            }}
+            sx={{ height: 36 }}
             onClick={() => navigate("/dashboard")}
           />
 
-          {!isMobile && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-                minWidth: 0,
-                flex: "1 1 auto",
-                justifyContent: "flex-end",
-              }}
-            >
+          {!isMobile ? (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               {navLinks.map((link) => (
                 <Button
                   key={link.path}
@@ -151,93 +127,15 @@ export default function Budgets() {
                   {link.label}
                 </Button>
               ))}
-
-              <TextField
-                size="small"
-                placeholder="Search"
-                sx={{ bgcolor: "#fff", borderRadius: "8px", width: 160 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <Button
-                onClick={handleLogout}
-                sx={{
-                  bgcolor: "#374151",
-                  color: "#fff",
-                  borderRadius: "8px",
-                }}
-              >
-                Logout
-              </Button>
             </Box>
-          )}
-
-          {isMobile && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: { xs: 0.5, sm: 1 },
-                minWidth: 0,
-                flex: "1 1 auto",
-                justifyContent: "flex-end",
-                overflow: "hidden",
-              }}
-            >
-              <TextField
-                size="small"
-                placeholder="Search"
-                sx={{
-                  bgcolor: "#fff",
-                  borderRadius: "8px",
-                  flex: "1 1 auto",
-                  minWidth: 0,
-                  maxWidth: { xs: 96, sm: 120 },
-                  "& .MuiInputBase-root": { fontSize: { xs: "0.75rem", sm: "0.875rem" } },
-                  "& .MuiInputBase-input": { py: { xs: 0.75, sm: 1 } },
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <Button
-                onClick={handleLogout}
-                sx={{
-                  bgcolor: "#374151",
-                  color: "#fff",
-                  px: { xs: 1, sm: 1.5 },
-                  py: { xs: 0.5, sm: 0.75 },
-                  fontSize: { xs: "0.7rem", sm: 12 },
-                  flexShrink: 0,
-                  minWidth: "auto",
-                }}
-              >
-                Logout
-              </Button>
-
-              <IconButton
-                onClick={() => setOpen(true)}
-                sx={{ color: "#fff", flexShrink: 0, p: { xs: 0.5, sm: 1 } }}
-              >
-                <MenuIcon sx={{ fontSize: { xs: "1.35rem", sm: "1.5rem" } }} />
-              </IconButton>
-            </Box>
+          ) : (
+            <IconButton onClick={() => setOpen(true)} sx={{ color: "#fff" }}>
+              <MenuIcon />
+            </IconButton>
           )}
         </Toolbar>
       </AppBar>
 
-      {/* MOBILE DRAWER */}
       <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
         <Box sx={{ width: 240, p: 2 }}>
           <List>
@@ -255,26 +153,13 @@ export default function Budgets() {
         </Box>
       </Drawer>
 
-      <Box sx={{ display: "flex", pt: { xs: 8, md: 10 } }}>
+      <Box sx={{ display: "flex", pt: 10 }}>
         <Box sx={{ display: { xs: "none", md: "block" } }}>
           <Sidebar />
         </Box>
 
-        <Box
-          sx={{
-            flex: 1,
-            ml: { xs: 0, md: "260px" },
-            p: { xs: 1.5, md: 4 },
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: { xs: "1.25rem", sm: "1.5rem", md: "2rem" },
-              mb: { xs: 2, md: 3 },
-            }}
-            color={UI.primary}
-            fontWeight={700}
-          >
+        <Box sx={{ flex: 1, ml: { xs: 0, md: "260px" }, p: { xs: 1.5, md: 4 } }}>
+          <Typography fontSize={{ xs: 22, md: 32 }} mb={3} color={UI.primary} fontWeight={700}>
             Budgets
           </Typography>
 
@@ -282,9 +167,9 @@ export default function Budgets() {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
-              gap: { xs: 1.5, md: 2 },
-              mb: { xs: 2, md: 3 },
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(3,1fr)" },
+              gap: 2,
+              mb: 3,
             }}
           >
             {[
@@ -292,18 +177,9 @@ export default function Budgets() {
               { label: "Spent", value: totals.spent, color: UI.secondary },
               { label: "Remaining", value: totals.remaining, color: UI.accent },
             ].map((item, i) => (
-              <Paper key={i} sx={{ p: { xs: 1.25, md: 2.5 }, borderRadius: 2 }}>
-                <Typography
-                  color="text.secondary"
-                  sx={{ fontSize: { xs: "0.7rem", md: "0.875rem" } }}
-                >
-                  {item.label}
-                </Typography>
-                <Typography
-                  sx={{ fontSize: { xs: "1.125rem", md: "1.375rem" } }}
-                  fontWeight={700}
-                  color={item.color}
-                >
+              <Paper key={i} sx={{ p: 2 }}>
+                <Typography fontSize={12}>{item.label}</Typography>
+                <Typography fontSize={{ xs: 18, md: 24 }} fontWeight={700} color={item.color}>
                   {money(item.value)}
                 </Typography>
               </Paper>
@@ -314,79 +190,62 @@ export default function Budgets() {
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" },
-              gap: { xs: 2, md: 3 },
+              gap: 3,
             }}
           >
-            <Paper sx={{ p: { xs: 1.25, md: 2.5 }, overflowX: "auto" }}>
-              <Table size="small" sx={{ minWidth: { xs: 280, sm: 400 } }}>
+            {/* TABLE FIX */}
+            <Paper sx={{ p: 2, overflowX: "auto" }}>
+              <Table>
                 <TableBody>
                   {budgetData.map((b) => {
                     const percent = b.budgeted
                       ? Math.min((b.spent / b.budgeted) * 100, 100)
                       : 0;
 
+                    const over = b.spent > b.budgeted;
+
                     return (
                       <TableRow key={b.id}>
-                        <TableCell
-                          sx={{
-                            fontSize: { xs: "0.7rem", sm: "0.875rem" },
-                            py: { xs: 0.75, md: 1 },
-                            px: { xs: 0.75, md: 1 },
-                          }}
-                        >
-                          {b.category}
+                        <TableCell>
+                          <Typography fontSize={13} fontWeight={600}>
+                            {b.category}
+                          </Typography>
+
+                          {/* MOBILE STACK */}
+                          <Box sx={{ display: { xs: "block", sm: "none" } }}>
+                            <Typography fontSize={12}>
+                              {money(b.spent)} / {money(b.budgeted)}
+                            </Typography>
+                            <Typography fontSize={12}>
+                              Remaining: {money(b.remaining)}
+                            </Typography>
+                          </Box>
                         </TableCell>
-                        <TableCell
-                          sx={{
-                            display: { xs: "none", sm: "table-cell" },
-                            fontSize: { xs: "0.7rem", sm: "0.875rem" },
-                            py: { xs: 0.75, md: 1 },
-                            px: { xs: 0.75, md: 1 },
-                          }}
-                        >
+
+                        <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
                           {money(b.budgeted)}
                         </TableCell>
-                        <TableCell
-                          sx={{
-                            fontSize: { xs: "0.7rem", sm: "0.875rem" },
-                            py: { xs: 0.75, md: 1 },
-                            px: { xs: 0.75, md: 1 },
-                          }}
-                        >
-                          {money(b.spent)}
+
+                        <TableCell>
+                          <Typography fontSize={12}>{money(b.spent)}</Typography>
                         </TableCell>
-                        <TableCell
-                          sx={{
-                            display: { xs: "none", md: "table-cell" },
-                            py: { xs: 0.75, md: 1 },
-                            px: { xs: 0.75, md: 1 },
-                          }}
-                        >
+
+                        <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
                           <LinearProgress value={percent} variant="determinate" />
                         </TableCell>
-                        <TableCell
-                          sx={{
-                            fontSize: { xs: "0.7rem", sm: "0.875rem" },
-                            py: { xs: 0.75, md: 1 },
-                            px: { xs: 0.75, md: 1 },
-                          }}
-                        >
+
+                        <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>
                           {money(b.remaining)}
                         </TableCell>
-                        <TableCell sx={{ py: { xs: 0.75, md: 1 }, px: { xs: 0.5, md: 1 } }}>
-                          <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }}>
-                            <Button
-                              size="small"
-                              sx={{ fontSize: { xs: "0.65rem", sm: "0.8125rem" }, minWidth: 0, px: { xs: 0.5, sm: 1 } }}
-                            >
-                              View
-                            </Button>
-                            <Button
-                              size="small"
-                              sx={{ fontSize: { xs: "0.65rem", sm: "0.8125rem" }, minWidth: 0, px: { xs: 0.5, sm: 1 } }}
-                            >
-                              Edit
-                            </Button>
+
+                        <TableCell>
+                          <Box sx={{ display: "flex", justifyContent: "center" }}>
+                            <IconButton size="small">
+                              <Visibility fontSize="small" />
+                            </IconButton>
+                            <IconButton size="small">
+                              <Edit fontSize="small" />
+                            </IconButton>
                           </Box>
                         </TableCell>
                       </TableRow>
@@ -397,16 +256,11 @@ export default function Budgets() {
             </Paper>
 
             {/* CHART */}
-            <Paper sx={{ p: { xs: 1.5, md: 2.5 } }}>
-              <Box sx={{ width: "100%", height: { xs: 260, md: 240 } }}>
-                <ResponsiveContainer width="100%" height="100%">
+            <Paper sx={{ p: 2 }}>
+              <Box sx={{ width: "100%", height: 220 }}>
+                <ResponsiveContainer>
                   <PieChart>
-                    <Pie
-                      data={chartData}
-                      dataKey="value"
-                      innerRadius={isMobile ? 45 : 55}
-                      outerRadius={isMobile ? 70 : 85}
-                    >
+                    <Pie data={chartData} dataKey="value">
                       {chartData.map((d, i) => (
                         <Cell key={i} fill={d.color} />
                       ))}
