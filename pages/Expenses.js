@@ -15,22 +15,10 @@ import {
   FormControl,
   TextField,
   IconButton,
-  AppBar,
-  Toolbar,
-  InputAdornment,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
 } from "@mui/material";
 import { Edit, Delete, Add } from "@mui/icons-material";
-import SearchIcon from "@mui/icons-material/Search";
-import MenuIcon from "@mui/icons-material/Menu";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logout } from "../redux/userSlice";
 import Sidebar from "../components/dashboard/Sidebar";
+import AppHeaderBar from "../components/AppHeaderBar";
 
 const UI = {
   primary: "#1A3263",
@@ -48,27 +36,7 @@ const mockExpenses = [
 ];
 
 export default function Expenses() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const location = useLocation();
-
-  const isMobile = useMediaQuery("(max-width:768px)");
-  const [open, setOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
-
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
-  const navLinks = [
-    { label: "Dashboard", path: "/dashboard" },
-    { label: "Budgets", path: "/budgets" },
-    { label: "Expenses", path: "/expenses" },
-    { label: "Goals", path: "/goals" },
-    { label: "Profile", path: "/profile" },
-  ];
 
   const filteredExpenses = useMemo(() => {
     if (selectedCategory === "All Categories") return mockExpenses;
@@ -97,116 +65,7 @@ export default function Expenses() {
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#fafafa" }}>
-      {/* ===== TOP MENU (əlavə edildi) ===== */}
-      <AppBar position="fixed" elevation={0} sx={{ bgcolor: "#1F2937" }}>
-        <Toolbar sx={{ justifyContent: "space-between", px: 2 }}>
-          <Box
-            component="img"
-            src="/logo.png.png"
-            alt=""
-            sx={{ height: 40, cursor: "pointer", objectFit: "contain" }}
-            onClick={() => navigate("/dashboard")}
-          />
-
-          {!isMobile && (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              {navLinks.map((link) => (
-                <Button
-                  key={link.path}
-                  component={RouterLink}
-                  to={link.path}
-                  sx={{
-                    color: "#fff",
-                    textTransform: "none",
-                    fontWeight:
-                      location.pathname === link.path ? 700 : 400,
-                  }}
-                >
-                  {link.label}
-                </Button>
-              ))}
-
-              <TextField
-                size="small"
-                placeholder="Search"
-                sx={{ bgcolor: "#fff", borderRadius: "8px", width: 160 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <Button
-                onClick={handleLogout}
-                sx={{
-                  bgcolor: "#374151",
-                  color: "#fff",
-                  borderRadius: "8px",
-                  textTransform: "none",
-                }}
-              >
-                Logout
-              </Button>
-            </Box>
-          )}
-
-          {isMobile && (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <TextField
-                size="small"
-                placeholder="Search"
-                sx={{ bgcolor: "#fff", borderRadius: "8px", width: 120 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <Button
-                onClick={handleLogout}
-                sx={{
-                  bgcolor: "#374151",
-                  color: "#fff",
-                  px: 1.5,
-                  borderRadius: "8px",
-                  fontSize: 12,
-                  textTransform: "none",
-                }}
-              >
-                Logout
-              </Button>
-
-              <IconButton onClick={() => setOpen(true)} sx={{ color: "#fff" }}>
-                <MenuIcon />
-              </IconButton>
-            </Box>
-          )}
-        </Toolbar>
-      </AppBar>
-
-      {/* MOBILE MENU */}
-      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
-        <Box sx={{ width: 240, p: 2 }}>
-          <List>
-            {navLinks.map((link) => (
-              <ListItem
-                key={link.path}
-                component={RouterLink}
-                to={link.path}
-                onClick={() => setOpen(false)}
-              >
-                <ListItemText primary={link.label} />
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
+      <AppHeaderBar />
 
       {/* ===== PAGE BODY (toxunulmayıb) ===== */}
       <Box sx={{ display: "flex", pt: 12 }}>

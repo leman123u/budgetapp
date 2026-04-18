@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   Box,
   Typography,
@@ -10,10 +10,6 @@ import {
   Button,
   Avatar,
   Chip,
-  AppBar,
-  Toolbar,
-  InputAdornment,
-  IconButton,
 } from "@mui/material";
 import {
   Person,
@@ -22,10 +18,15 @@ import {
   Cancel,
   CheckCircle,
 } from "@mui/icons-material";
-import SearchIcon from "@mui/icons-material/Search";
-import MenuIcon from "@mui/icons-material/Menu";
-import { logout } from "../redux/userSlice";
 import Sidebar from "../components/dashboard/Sidebar";
+import AppHeaderBar from "../components/AppHeaderBar";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const UI = {
   primary: "#1A3263",
@@ -34,9 +35,14 @@ const UI = {
   soft: "#E8E2DB",
 };
 
+const profileChartData = [
+  { name: "Food", value: 420, color: UI.primary },
+  { name: "Bills", value: 280, color: UI.secondary },
+  { name: "Other", value: 200, color: UI.accent },
+];
+
 export default function Profile() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -47,64 +53,11 @@ export default function Profile() {
     else setFormData({ username: user.name || "", email: user.email || "" });
   }, [user, navigate]);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
   if (!user) return null;
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#f7f8fa" }}>
-      {/* ===== TOP MENU (əlavə edildi) ===== */}
-      <AppBar position="fixed" elevation={0} sx={{ bgcolor: "#1F2937" }}>
-        <Toolbar sx={{ justifyContent: "space-between", px: 2 }}>
-          <Box
-            component="img"
-            src="/logo.png.png"
-            alt=""
-            sx={{ height: 40, cursor: "pointer", objectFit: "contain" }}
-            onClick={() => navigate("/dashboard")}
-          />
-
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <TextField
-              size="small"
-              placeholder="Search"
-              sx={{
-                bgcolor: "#fff",
-                borderRadius: "8px",
-                width: 160,
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                ),
-                disableUnderline: true,
-              }}
-            />
-
-            <Button
-              onClick={handleLogout}
-              sx={{
-                bgcolor: "#374151",
-                color: "#fff",
-                borderRadius: "8px",
-                textTransform: "none",
-              }}
-            >
-              Logout
-            </Button>
-
-            <IconButton sx={{ color: "#fff" }}>
-              <MenuIcon />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
+      <AppHeaderBar />
 
       {/* ===== PAGE BODY (toxunulmayıb) ===== */}
       <Box sx={{ display: "flex", pt: 12 }}>
@@ -257,6 +210,28 @@ export default function Profile() {
                   <Typography fontWeight={700} color="#1E7F43">
                     Active
                   </Typography>
+                </Box>
+
+                <Box sx={{ mt: 2, width: "100%" }}>
+                  <Typography fontWeight={600} mb={1} fontSize={14}>
+                    Spending overview
+                  </Typography>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <PieChart>
+                      <Pie
+                        data={profileChartData}
+                        dataKey="value"
+                        nameKey="name"
+                        innerRadius={55}
+                        outerRadius={85}
+                      >
+                        {profileChartData.map((d, i) => (
+                          <Cell key={i} fill={d.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </Box>
               </Paper>
             </Grid>
