@@ -1,190 +1,207 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import {
   Box,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   Typography,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  TextField,
+  Drawer,
   IconButton,
+  useMediaQuery,
+  useTheme,
+  Divider,
 } from "@mui/material";
-import { Edit, Delete, Add } from "@mui/icons-material";
-import Sidebar from "../components/dashboard/Sidebar";
-import AppHeaderBar from "../components/AppHeaderBar";
+import MenuIcon from "@mui/icons-material/Menu";
 
-const UI = {
-  primary: "#1A3263",
-  secondary: "#547792",
-  accent: "#FAB95B",
-  soft: "#E8E2DB",
-};
+// ICONS
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import InsightsOutlinedIcon from "@mui/icons-material/InsightsOutlined";
+import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
+import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
-const mockExpenses = [
-  { id: 1, date: "15/04/2024", category: "Food", description: "Dinner at Restaurant", amount: 60 },
-  { id: 2, date: "12/04/2024", category: "Transport", description: "Taxi Ride", amount: -12 },
-  { id: 3, date: "09/04/2024", category: "Shopping", description: "New Shoes", amount: -80 },
-  { id: 4, date: "08/04/2024", category: "Entertainment", description: "Cinema Tickets", amount: -25 },
-  { id: 5, date: "05/04/2024", category: "Groceries", description: "Supermarket", amount: -45 },
-];
+import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/userSlice";
 
-export default function Expenses() {
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+const Sidebar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
 
-  const filteredExpenses = useMemo(() => {
-    if (selectedCategory === "All Categories") return mockExpenses;
-    return mockExpenses.filter((e) => e.category === selectedCategory);
-  }, [selectedCategory]);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [open, setOpen] = useState(false);
 
-  const monthlyTotal = useMemo(
-    () => filteredExpenses.reduce((s, e) => s + e.amount, 0),
-    [filteredExpenses]
-  );
-
-  const money = (v) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(v);
-
-  const categories = [
-    "All Categories",
-    "Food",
-    "Transport",
-    "Shopping",
-    "Entertainment",
-    "Groceries",
+  const menuItems = [
+    { label: "Dashboard", path: "/dashboard-live", icon: <DashboardOutlinedIcon /> },
+    { label: "Budgets", path: "/budgets", icon: <AccountBalanceWalletOutlinedIcon /> },
+    { label: "Expenses", path: "/expenses", icon: <ReceiptLongOutlinedIcon /> },
+    { label: "AI Assistant", path: "/ai", icon: <SmartToyOutlinedIcon /> },
+    { label: "Goals", path: "/goals", icon: <FlagOutlinedIcon /> },
+    { label: "Insights", path: "/insights", icon: <InsightsOutlinedIcon /> },
+    { label: "Premium", path: "/premium", icon: <WorkspacePremiumOutlinedIcon /> },
+    { label: "Help", path: "/help", icon: <InfoOutlinedIcon /> },
   ];
 
-  return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#fafafa" }}>
-      <AppHeaderBar />
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
-      {/* ===== PAGE BODY (toxunulmayıb) ===== */}
-      <Box sx={{ display: "flex", pt: 12 }}>
-        <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <Sidebar />
-        </Box>
+  const isActive = (path) => {
+    if (path === "/dashboard-live") {
+      return (
+        location.pathname === "/dashboard-live" ||
+        location.pathname === "/dashboard"
+      );
+    }
+    return location.pathname === path;
+  };
 
-        <Box sx={{ flex: 1, ml: { xs: 0, md: "260px" }, p: { xs: 2, md: 4 } }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 3 }}>
-            <Typography fontSize={{ xs: 24, md: 32 }} fontWeight={700} color={UI.primary}>
-              Expenses
-            </Typography>
+  const sidebarContent = (
+    <Box
+      sx={{
+        width: { xs: 240, sm: 260 },
+        height: "100vh",
+        bgcolor: "#FFFFFF",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* HEADER */}
+      <Box sx={{ p: { xs: 2, md: 3 }, borderBottom: "1px solid #E5E7EB" }}>
+        <Typography sx={{ fontWeight: 800, fontSize: { xs: 18, md: 20 } }}>
+          Personal Budget
+        </Typography>
+        <Typography sx={{ fontSize: 12, color: "#6B7280" }}>
+          Smart Financial Management
+        </Typography>
+      </Box>
 
-            <Typography color="text.secondary">
-              Track and manage your expenses
-            </Typography>
+      {/* MENU */}
+      <List sx={{ flex: 1, pt: { xs: 2, md: 3 }, px: { xs: 1.5, md: 2 } }}>
+        {menuItems.map((item) => {
+          const active = isActive(item.path);
 
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              sx={{
-                bgcolor: UI.primary,
-                borderRadius: 2,
-                textTransform: "none",
-                width: "100%",
-              }}
-            >
-              Add Expense
-            </Button>
-          </Box>
-
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" },
-              gap: 3,
-            }}
-          >
-            <Paper sx={{ borderRadius: 3, border: `1px solid ${UI.soft}` }}>
-              <TableContainer>
-                <Table sx={{ minWidth: 650 }}>
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: UI.soft }}>
-                      {["Date", "Category", "Description", "Amount", "Actions"].map((h) => (
-                        <TableCell key={h} sx={{ fontWeight: 600 }}>
-                          {h}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-
-                  <TableBody>
-                    {filteredExpenses.map((e) => (
-                      <TableRow key={e.id} hover>
-                        <TableCell>{e.date}</TableCell>
-                        <TableCell>{e.category}</TableCell>
-                        <TableCell>{e.description}</TableCell>
-                        <TableCell
-                          sx={{
-                            fontWeight: 600,
-                            color: e.amount >= 0 ? UI.secondary : UI.accent,
-                          }}
-                        >
-                          {money(e.amount)}
-                        </TableCell>
-                        <TableCell>
-                          <Button size="small" startIcon={<Edit />}>
-                            Edit
-                          </Button>
-                          <IconButton sx={{ color: UI.accent }}>
-                            <Delete />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-
-            <Paper sx={{ borderRadius: 3, border: `1px solid ${UI.soft}`, p: 2.5 }}>
-              <Typography fontWeight={600} mb={2}>
-                Summary
-              </Typography>
-
-              <Paper sx={{ p: 2.5, mb: 2, borderRadius: 2, border: `1px solid ${UI.soft}` }}>
-                <Typography fontSize={12} color="text.secondary">
-                  Monthly Total
-                </Typography>
-                <Typography
-                  fontSize={26}
-                  fontWeight={700}
-                  color={monthlyTotal >= 0 ? UI.secondary : UI.accent}
+          return (
+            <ListItem key={item.path} disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  navigate(item.path);
+                  if (isMobile) setOpen(false);
+                }}
+                sx={{
+                  mb: 1,
+                  borderRadius: 2,
+                  py: { xs: 1, md: 1.2 },
+                  color: active ? "#111827" : "#374151",
+                  backgroundColor: active ? "#F3F4F6" : "transparent",
+                  "&:hover": { backgroundColor: "#F3F4F6" },
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 32,
+                    color: active ? "#111827" : "#6B7280",
+                  }}
                 >
-                  {money(monthlyTotal)}
-                </Typography>
-              </Paper>
+                  {item.icon}
+                </ListItemIcon>
 
-              <FormControl fullWidth size="small">
-                <Select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                  {categories.map((c) => (
-                    <MenuItem key={c} value={c}>
-                      {c}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{
+                    fontWeight: active ? 600 : 500,
+                    fontSize: { xs: 13, md: 14 },
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
+      </List>
 
-              <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 1.5 }}>
-                <TextField size="small" placeholder="From date" />
-                <TextField size="small" placeholder="To date" />
-              </Box>
-            </Paper>
-          </Box>
-        </Box>
+      <Divider />
+
+      {/* FOOTER */}
+      <Box sx={{ p: { xs: 1.5, md: 2 } }}>
+        <ListItemButton onClick={() => navigate("/profile")}>
+          <ListItemIcon sx={{ minWidth: 32 }}>
+            <PersonOutlineOutlinedIcon />
+          </ListItemIcon>
+          <ListItemText primary="Profile" />
+        </ListItemButton>
+
+        <ListItemButton onClick={() => navigate("/settings")}>
+          <ListItemIcon sx={{ minWidth: 32 }}>
+            <SettingsOutlinedIcon />
+          </ListItemIcon>
+          <ListItemText primary="Settings" />
+        </ListItemButton>
+
+        <ListItemButton onClick={handleLogout}>
+          <ListItemIcon sx={{ minWidth: 32 }}>
+            <LogoutOutlinedIcon />
+          </ListItemIcon>
+          <ListItemText primary="Logout" />
+        </ListItemButton>
       </Box>
     </Box>
   );
-}
+
+  return isMobile ? (
+    <>
+      {/* 📱 MENU BUTTON */}
+      <IconButton
+        onClick={() => setOpen(true)}
+        sx={{
+          position: "fixed",
+          top: 12,
+          left: 12,
+          zIndex: 1400,
+          bgcolor: "#fff",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          "&:hover": { bgcolor: "#f3f4f6" },
+        }}
+      >
+        <MenuIcon />
+      </IconButton>
+
+      {/* 📱 DRAWER */}
+      <Drawer
+        open={open}
+        onClose={() => setOpen(false)}
+        PaperProps={{
+          sx: { width: { xs: 240, sm: 260 } },
+        }}
+      >
+        {sidebarContent}
+      </Drawer>
+    </>
+  ) : (
+    <Box
+      sx={{
+        width: 260,
+        position: "fixed",
+        left: 0,
+        top: 0,
+        height: "100vh",
+        borderRight: "1px solid #E5E7EB",
+      }}
+    >
+      {sidebarContent}
+    </Box>
+  );
+};
+
+export default Sidebar;
