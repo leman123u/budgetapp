@@ -49,7 +49,7 @@ const ChartsSection = ({
       elevation={0}
       sx={{
         height: "100%",
-        borderRadius: 4,                 // ⬅ less rounded (professional)
+        borderRadius: 4,
         overflow: "hidden",
         bgcolor: "background.paper",
         border: "1px solid",
@@ -59,8 +59,8 @@ const ChartsSection = ({
         flexDirection: "column",
       }}
     >
-      <Box sx={{ textAlign: "center", py: { xs: 1.5, md: 2 } }}>
-        <Typography fontWeight={600} fontSize={{ xs: 14, md: 16 }}>
+      <Box sx={{ textAlign: "center", py: 2 }}>
+        <Typography fontWeight={600} fontSize={16}>
           {title}
         </Typography>
       </Box>
@@ -68,8 +68,8 @@ const ChartsSection = ({
       <Box
         sx={{
           flex: 1,
-          px: { xs: 2, md: 3 },
-          pb: { xs: 2, md: 3 },
+          px: 3,
+          pb: 3,
           pt: 1,
           display: "flex",
           flexDirection: "column",
@@ -86,7 +86,7 @@ const ChartsSection = ({
       sx={{
         display: "grid",
         gridTemplateColumns: { xs: "1fr", md: "2fr 1.5fr" },
-        gap: { xs: 2, md: 3 },
+        gap: 3,
       }}
     >
       {/* PIE */}
@@ -95,15 +95,15 @@ const ChartsSection = ({
           <Typography color="text.secondary">Loading...</Typography>
         ) : (
           <>
-            <Box sx={{ width: "100%", height: { xs: 180, md: 220 } }}>
-              <ResponsiveContainer>
+            <Box sx={{ width: "100%", height: 220 }}>
+              <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieTotal ? pieData : [{ name: "No data", value: 1 }]}
                     cx="50%"
                     cy="50%"
-                    innerRadius={{ xs: 45, md: 60 }}
-                    outerRadius={{ xs: 70, md: 85 }}
+                    innerRadius={50}
+                    outerRadius={80}
                     dataKey="value"
                   >
                     {(pieTotal ? pieData : [{ name: "No data", value: 1 }]).map(
@@ -117,7 +117,7 @@ const ChartsSection = ({
                     <Tooltip
                       formatter={(v) => formatMoney(v)}
                       contentStyle={{
-                        borderRadius: 6,      // ⬅ softer tooltip corners
+                        borderRadius: 6,
                         border: "none",
                         boxShadow: "0 8px 22px rgba(0,0,0,0.12)",
                         fontSize: 12,
@@ -136,7 +136,7 @@ const ChartsSection = ({
               sx={{
                 display: "flex",
                 justifyContent: "center",
-                gap: { xs: 1.5, md: 3 },
+                gap: 2,
                 mt: 2,
                 flexWrap: "wrap",
               }}
@@ -166,13 +166,7 @@ const ChartsSection = ({
 
       {/* BAR */}
       <Card title="Monthly Budget vs Actual">
-        <Box
-          sx={{
-            width: "100%",
-            height: { xs: 220, md: 260 },
-            px: { xs: 0, md: 1 },
-          }}
-        >
+        <Box sx={{ width: "100%", height: 260 }}>
           <ClusteredColumnChart
             data={monthlyData}
             loading={expensesLoading || budgetsLoading}

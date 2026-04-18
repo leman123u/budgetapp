@@ -66,7 +66,6 @@ export default function Budgets() {
     <Box sx={{ minHeight: "100vh", bgcolor: "#fafafa" }}>
       <AppHeaderBar />
 
-      {/* ===== PAGE BODY (unchanged) ===== */}
       <Box sx={{ display: "flex", pt: 12 }}>
         <Box sx={{ display: { xs: "none", md: "block" } }}>
           <Sidebar />
@@ -111,7 +110,10 @@ export default function Budgets() {
               <Table>
                 <TableBody>
                   {budgetData.map((b) => {
-                    const percent = (b.spent / b.budgeted) * 100;
+                    const percent = b.budgeted
+                      ? Math.min((b.spent / b.budgeted) * 100, 100)
+                      : 0;
+
                     const over = b.spent > b.budgeted;
 
                     return (
@@ -157,6 +159,7 @@ export default function Budgets() {
               </Table>
             </Paper>
 
+            {/* 🔥 FIXED CHART */}
             <Paper
               sx={{
                 p: 2.5,
@@ -167,16 +170,23 @@ export default function Budgets() {
                 alignItems: "center",
               }}
             >
-              <ResponsiveContainer width="100%" height={220}>
-                <PieChart>
-                  <Pie data={chartData} dataKey="value" innerRadius={55} outerRadius={85}>
-                    {chartData.map((d, i) => (
-                      <Cell key={i} fill={d.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(v) => money(v)} />
-                </PieChart>
-              </ResponsiveContainer>
+              <Box sx={{ width: "100%", height: 240 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      dataKey="value"
+                      innerRadius={55}
+                      outerRadius={85}
+                    >
+                      {chartData.map((d, i) => (
+                        <Cell key={i} fill={d.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(v) => money(v)} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
             </Paper>
           </Box>
         </Box>
