@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Box,
   Paper,
@@ -9,8 +9,23 @@ import {
   TableCell,
   TableRow,
   LinearProgress,
+  AppBar,
+  Toolbar,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import { Edit, Visibility } from "@mui/icons-material";
+import SearchIcon from "@mui/icons-material/Search";
+import MenuIcon from "@mui/icons-material/Menu";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/userSlice";
 import {
   PieChart,
   Pie,
@@ -19,7 +34,6 @@ import {
   Tooltip,
 } from "recharts";
 import Sidebar from "../components/dashboard/Sidebar";
-import AppHeaderBar from "../components/AppHeaderBar";
 
 const UI = {
   primary: "#1A3263",
@@ -36,6 +50,27 @@ const budgetData = [
 ];
 
 export default function Budgets() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
+
+  const isMobile = useMediaQuery("(max-width:768px)");
+  const [open, setOpen] = useState(false);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  const navLinks = [
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Budgets", path: "/budgets" },
+    { label: "Expenses", path: "/expenses" },
+    { label: "Goals", path: "/goals" },
+    { label: "Profile", path: "/profile" },
+  ];
+
   const totals = useMemo(
     () =>
       budgetData.reduce(
@@ -64,14 +99,122 @@ export default function Budgets() {
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#fafafa" }}>
-      <AppHeaderBar />
+      {/* ===== TOP MENU ===== */}
+      <AppBar position="fixed" elevation={0} sx={{ bgcolor: "#1F2937" }}>
+        <Toolbar sx={{ justifyContent: "space-between", px: 2 }}>
+          <Box
+            component="img"
+            src="/logo.png.png"
+            alt=""
+            sx={{ height: 40, cursor: "pointer" }}
+            onClick={() => navigate("/dashboard")}
+          />
+
+          {!isMobile && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              {navLinks.map((link) => (
+                <Button
+                  key={link.path}
+                  component={RouterLink}
+                  to={link.path}
+                  sx={{
+                    color: "#fff",
+                    textTransform: "none",
+                    fontWeight:
+                      location.pathname === link.path ? 700 : 400,
+                  }}
+                >
+                  {link.label}
+                </Button>
+              ))}
+
+              <TextField
+                size="small"
+                placeholder="Search"
+                sx={{ bgcolor: "#fff", borderRadius: "8px", width: 160 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <Button
+                onClick={handleLogout}
+                sx={{
+                  bgcolor: "#374151",
+                  color: "#fff",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                }}
+              >
+                Logout
+              </Button>
+            </Box>
+          )}
+
+          {isMobile && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <TextField
+                size="small"
+                placeholder="Search"
+              sx={{ bgcolor: "#fff", borderRadius: "8px", width: { xs: 80, sm: 120 } }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <Button
+                onClick={handleLogout}
+                sx={{
+                  bgcolor: "#374151",
+                  color: "#fff",
+                  px: 1.5,
+                  borderRadius: "8px",
+                  fontSize: 12,
+                }}
+              >
+                Logout
+              </Button>
+
+              <IconButton onClick={() => setOpen(true)} sx={{ color: "#fff" }}>
+                <MenuIcon />
+              </IconButton>
+            </Box>
+          )}
+        </Toolbar>
+      </AppBar>
+
+      {/* MOBILE MENU */}
+      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
+        <Box sx={{ width: 240, p: 2 }}>
+          <List>
+            {navLinks.map((link) => (
+              <ListItem
+                key={link.path}
+                component={RouterLink}
+                to={link.path}
+                onClick={() => setOpen(false)}
+              >
+                <ListItemText primary={link.label} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
 
       <Box sx={{ display: "flex", pt: 12 }}>
         <Box sx={{ display: { xs: "none", md: "block" } }}>
           <Sidebar />
         </Box>
 
-        <Box sx={{ flex: 1, ml: { xs: 0, md: "260px" }, p: { xs: 2, md: 4 } }}>
+        <Box sx={{ flex: 1, ml: { xs: 0, md: "260px" }, p: { xs: 1.5, md: 4 }, pt: { xs: "72px", md: "96px" } }}>
           <Typography fontSize={{ xs: 26, md: 32 }} mb={3} color={UI.primary} fontWeight={700}>
             Budgets
           </Typography>
@@ -106,7 +249,7 @@ export default function Budgets() {
               gap: 3,
             }}
           >
-            <Paper sx={{ p: 2.5, borderRadius: 2, border: `1px solid ${UI.soft}` }}>
+            <Paper sx={{ p: 2.5, borderRadius: 2, border: `1px solid ${UI.soft}`, overflowX: "auto" }}>
               <Table>
                 <TableBody>
                   {budgetData.map((b) => {
@@ -119,11 +262,13 @@ export default function Budgets() {
                     return (
                       <TableRow key={b.id}>
                         <TableCell>{b.category}</TableCell>
-                        <TableCell>{money(b.budgeted)}</TableCell>
+                        <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>
+                         {money(b.budgeted)}
+                           </TableCell>
                         <TableCell sx={{ color: UI.secondary }}>
                           {money(b.spent)}
                         </TableCell>
-                        <TableCell width={140}>
+                      <TableCell sx={{ display: { xs: "none", md: "table-cell" }, width: 140 }}>
                           <LinearProgress
                             value={percent}
                             variant="determinate"
@@ -144,14 +289,16 @@ export default function Budgets() {
                         <TableCell sx={{ color: UI.accent }}>
                           {money(b.remaining)}
                         </TableCell>
-                        <TableCell>
-                          <Button size="small" startIcon={<Visibility />}>
-                            View
-                          </Button>
-                          <Button size="small" startIcon={<Edit />}>
-                            Edit
-                          </Button>
-                        </TableCell>
+                        <TableCell sx={{ p: { xs: 0.5, sm: 1 } }}>
+  <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 0.5 }}>
+    <Button size="small" startIcon={<Visibility />} sx={{ fontSize: { xs: 10, sm: 13 } }}>
+                      View
+                    </Button>
+    <Button size="small" startIcon={<Edit />} sx={{ fontSize: { xs: 10, sm: 13 } }}>
+                      Edit
+                    </Button>
+                     </Box>
+                    </TableCell>
                       </TableRow>
                     );
                   })}
