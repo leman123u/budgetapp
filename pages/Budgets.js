@@ -99,7 +99,7 @@ export default function Budgets() {
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#fafafa" }}>
-      {/* ===== TOP MENU ===== */}
+      {/* TOP MENU */}
       <AppBar position="fixed" elevation={0} sx={{ bgcolor: "#1F2937" }}>
         <Toolbar sx={{ justifyContent: "space-between", px: 2 }}>
           <Box
@@ -147,7 +147,6 @@ export default function Budgets() {
                   bgcolor: "#374151",
                   color: "#fff",
                   borderRadius: "8px",
-                  textTransform: "none",
                 }}
               >
                 Logout
@@ -160,7 +159,7 @@ export default function Budgets() {
               <TextField
                 size="small"
                 placeholder="Search"
-              sx={{ bgcolor: "#fff", borderRadius: "8px", width: { xs: 80, sm: 120 } }}
+                sx={{ bgcolor: "#fff", borderRadius: "8px", width: { xs: 80, sm: 120 } }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -176,7 +175,6 @@ export default function Budgets() {
                   bgcolor: "#374151",
                   color: "#fff",
                   px: 1.5,
-                  borderRadius: "8px",
                   fontSize: 12,
                 }}
               >
@@ -191,7 +189,7 @@ export default function Budgets() {
         </Toolbar>
       </AppBar>
 
-      {/* MOBILE MENU */}
+      {/* MOBILE DRAWER */}
       <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
         <Box sx={{ width: 240, p: 2 }}>
           <List>
@@ -209,13 +207,19 @@ export default function Budgets() {
         </Box>
       </Drawer>
 
-      <Box sx={{ display: "flex", pt: 12 }}>
+      <Box sx={{ display: "flex", pt: { xs: 8, md: 10 } }}>
         <Box sx={{ display: { xs: "none", md: "block" } }}>
           <Sidebar />
         </Box>
 
-        <Box sx={{ flex: 1, ml: { xs: 0, md: "260px" }, p: { xs: 1.5, md: 4 }, pt: { xs: "72px", md: "96px" } }}>
-          <Typography fontSize={{ xs: 26, md: 32 }} mb={3} color={UI.primary} fontWeight={700}>
+        <Box
+          sx={{
+            flex: 1,
+            ml: { xs: 0, md: "260px" },
+            p: { xs: 1.5, md: 4 },
+          }}
+        >
+          <Typography fontSize={{ xs: 24, md: 32 }} mb={3} color={UI.primary} fontWeight={700}>
             Budgets
           </Typography>
 
@@ -233,9 +237,9 @@ export default function Budgets() {
               { label: "Spent", value: totals.spent, color: UI.secondary },
               { label: "Remaining", value: totals.remaining, color: UI.accent },
             ].map((item, i) => (
-              <Paper key={i} sx={{ p: 2.5, borderRadius: 2, border: `1px solid ${UI.soft}` }}>
+              <Paper key={i} sx={{ p: { xs: 1.5, md: 2.5 }, borderRadius: 2 }}>
                 <Typography color="text.secondary">{item.label}</Typography>
-                <Typography fontSize={24} fontWeight={700} color={item.color}>
+                <Typography fontSize={22} fontWeight={700} color={item.color}>
                   {money(item.value)}
                 </Typography>
               </Paper>
@@ -246,10 +250,10 @@ export default function Budgets() {
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" },
-              gap: 3,
+              gap: { xs: 2, md: 3 },
             }}
           >
-            <Paper sx={{ p: 2.5, borderRadius: 2, border: `1px solid ${UI.soft}`, overflowX: "auto" }}>
+            <Paper sx={{ p: { xs: 1.5, md: 2.5 }, overflowX: "auto" }}>
               <Table>
                 <TableBody>
                   {budgetData.map((b) => {
@@ -257,48 +261,23 @@ export default function Budgets() {
                       ? Math.min((b.spent / b.budgeted) * 100, 100)
                       : 0;
 
-                    const over = b.spent > b.budgeted;
-
                     return (
                       <TableRow key={b.id}>
                         <TableCell>{b.category}</TableCell>
                         <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>
-                         {money(b.budgeted)}
-                           </TableCell>
-                        <TableCell sx={{ color: UI.secondary }}>
-                          {money(b.spent)}
+                          {money(b.budgeted)}
                         </TableCell>
-                      <TableCell sx={{ display: { xs: "none", md: "table-cell" }, width: 140 }}>
-                          <LinearProgress
-                            value={percent}
-                            variant="determinate"
-                            sx={{
-                              height: 8,
-                              borderRadius: 6,
-                              bgcolor: UI.soft,
-                              "& .MuiLinearProgress-bar": {
-                                bgcolor: over
-                                  ? "#c62828"
-                                  : percent >= 80
-                                  ? UI.accent
-                                  : UI.secondary,
-                              },
-                            }}
-                          />
+                        <TableCell>{money(b.spent)}</TableCell>
+                        <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
+                          <LinearProgress value={percent} variant="determinate" />
                         </TableCell>
-                        <TableCell sx={{ color: UI.accent }}>
-                          {money(b.remaining)}
+                        <TableCell>{money(b.remaining)}</TableCell>
+                        <TableCell>
+                          <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }}>
+                            <Button size="small">View</Button>
+                            <Button size="small">Edit</Button>
+                          </Box>
                         </TableCell>
-                        <TableCell sx={{ p: { xs: 0.5, sm: 1 } }}>
-  <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 0.5 }}>
-    <Button size="small" startIcon={<Visibility />} sx={{ fontSize: { xs: 10, sm: 13 } }}>
-                      View
-                    </Button>
-    <Button size="small" startIcon={<Edit />} sx={{ fontSize: { xs: 10, sm: 13 } }}>
-                      Edit
-                    </Button>
-                     </Box>
-                    </TableCell>
                       </TableRow>
                     );
                   })}
@@ -306,25 +285,16 @@ export default function Budgets() {
               </Table>
             </Paper>
 
-            {/* 🔥 FIXED CHART */}
-            <Paper
-              sx={{
-                p: 2.5,
-                borderRadius: 2,
-                border: `1px solid ${UI.soft}`,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ width: "100%", height: 240 }}>
+            {/* CHART */}
+            <Paper sx={{ p: { xs: 1.5, md: 2.5 } }}>
+              <Box sx={{ width: "100%", height: { xs: 260, md: 240 } }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={chartData}
                       dataKey="value"
-                      innerRadius={55}
-                      outerRadius={85}
+                      innerRadius={isMobile ? 45 : 55}
+                      outerRadius={isMobile ? 70 : 85}
                     >
                       {chartData.map((d, i) => (
                         <Cell key={i} fill={d.color} />
