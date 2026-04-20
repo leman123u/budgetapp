@@ -158,8 +158,8 @@ export default function Budgets() {
           <Sidebar />
         </Box>
 
-        <Box sx={{ flex: 1, ml: { xs: 0, md: "260px" }, p: { xs: 1.5, md: 4 } }}>
-          <Typography fontSize={{ xs: 22, md: 32 }} mb={3} color={UI.primary} fontWeight={700}>
+        <Box sx={{ flex: 1, ml: { xs: 0, md: "260px" }, p: { xs: 2, md: 4 } }}>
+          <Typography fontSize={{ xs: 26, md: 32 }} mb={3} color={UI.primary} fontWeight={700}>
             Budgets
           </Typography>
 
